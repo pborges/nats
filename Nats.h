@@ -60,6 +60,8 @@ private:
     }
 
 public:
+    bool publishPrefix = false;
+
     NATS(const char *hostname, Client *client, IPAddress server, Stream *debug = NULL) {
         mHostname = hostname;
         mServer = server;
@@ -83,9 +85,19 @@ public:
         return r;
     }
 
+    bool publish(const char *topic, float msg) {
+        char buff[12];
+        snprintf(buff, sizeof(buff), "%f", msg);
+        return publish(topic, buff);
+    }
 
-    // Returns INBOX ID
-    bool publish(const char *topic, const char *msg) {
+    bool publish(const char *topic, int msg) {
+        char buff[12];
+        snprintf(buff, sizeof(buff), "%d", msg);
+        return publish(topic, buff);
+    }
+
+    bool publish(const char *topic, char *msg) {
         if (mDebug != NULL) {
             mDebug->printf("PUB %s %d\n%s\r\n", topic, strlen(msg), msg);
         }
